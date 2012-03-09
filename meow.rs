@@ -30,7 +30,7 @@ fn sample_string() -> str {
 
 fn bible() -> str {
    std::io::println("Loading the lolcat bible...");
-   let path = "./data/lolcat/bible.xml";
+   let path = "/code/meow/data/lolcat/bible.xml";
    let data = std::io::read_whole_file(path);
    alt data {
       result::err(ee) { fail ee; }
