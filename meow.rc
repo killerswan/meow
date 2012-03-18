@@ -1,8 +1,8 @@
 #[link(
    name = "meow",
    vers = "1.3",
-   uuid = "a2006d10-9901-47d3-9b5d-b88cf8d3a07a"
-)];
+   uuid = "a2006d10-9901-47d3-9b5d-b88cf8d3a07a",
+   url = "https://github.com/killerswan/meow")];
 
 #[crate_type = "lib"];
 
