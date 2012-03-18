@@ -14,7 +14,7 @@ export bible,                 // read a copy of the lolcat bible
 use std;
 
 fn status(desc: str) {
-   std::io::println("meow: " + desc);
+   io::println("meow: " + desc);
 }
 
 fn status_two(desc: str, aa: uint, bb: uint) {
@@ -22,16 +22,16 @@ fn status_two(desc: str, aa: uint, bb: uint) {
 }
 
 fn sample_string() -> str {
-   let generator: std::rand::rng = std::rand::mk_rng();
+   let generator: rand::rng = rand::rng();
    let random = generator.next();
    let sz = random / u32::max_value * 2048u32;
    ret generator.gen_str(sz as uint);
 }
 
 fn bible() -> str {
-   std::io::println("Loading the lolcat bible...");
+   io::println("Loading the lolcat bible...");
    let path = "/code/meow/data/lolcat/bible.xml";
-   let data = std::io::read_whole_file(path);
+   let data = io::read_whole_file(path);
    alt data {
       result::err(ee) { fail ee; }
       result::ok(data) { 
@@ -108,7 +108,7 @@ fn compare_sweep_strings <XX, YY> (
 
    let size = min_size;
 
-   let generator = std::rand::mk_rng();
+   let generator = rand::rng();
 
    status(#fmt("Sweeping across strings of %u to %u (%u tests per step)...", 
                min_size,
@@ -158,7 +158,7 @@ fn compare_sweep_u8vecs <XX, YY> (
 
    let size = min_size;
 
-   let generator = std::rand::mk_rng();
+   let generator = rand::rng();
 
    status(#fmt("Sweeping across [u8] of %u to %u (%u tests per step)...", 
                min_size,
