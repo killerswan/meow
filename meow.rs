@@ -5,6 +5,7 @@
 
 export bible,                 // read a copy of the lolcat bible
        measure_time,          // time one function call in nanoseconds
+       measure_time_and_value,          // time one function call in nanoseconds
        time,                  // print the time of one function call
        sample_string,         // provide a sample string < 2048 bytes
        compare,               // compare two functions
@@ -48,6 +49,13 @@ fn measure_time <XX> (action: fn()->XX) -> uint {
    let t1 = std::time::precise_time_ns();
    ret t1 - t0;
 } 
+
+fn measure_time_and_value <VV> (action: fn()->VV) -> (VV, uint) {
+   let t0 = std::time::precise_time_ns();
+   let val = action();
+   let t1 = std::time::precise_time_ns();
+   ret (val, t1-t0);
+}
 
 fn fmt_ms(nsecs: uint) -> str {
    #fmt("%06.3f ms", nsecs as float / 1e6f)
