@@ -4,7 +4,8 @@
 // WARNING: remember, this is NOT Haskell's QuickCheck or Criterion :D
 
 export bible,                 // read a copy of the lolcat bible
-       time,                  // time one function call
+       measure_time,          // time one function call in nanoseconds
+       time,                  // print the time of one function call
        sample_string,         // provide a sample string < 2048 bytes
        compare,               // compare two functions
        compare_several,       // compare two functions (repeatedly)
@@ -41,7 +42,7 @@ fn bible() -> str {
    }
 }
 
-fn measure_time <XX> (action: fn&()->XX) -> uint {
+fn measure_time <XX> (action: fn()->XX) -> uint {
    let t0 = std::time::precise_time_ns();
    action();
    let t1 = std::time::precise_time_ns();
@@ -69,9 +70,9 @@ fn compare <XX> (desc: str,
 fn compare_several <XX> (desc: str,
                          actionA: fn&()->XX,
                          actionB: fn&()->XX) {
-   let tsA = [];
-   let tsB = [];
-   let jj = 0u;
+   let mut tsA = [mut];
+   let mut tsB = [mut];
+   let mut jj = 0u;
    let nn = 10u;
 
    while jj < nn {
@@ -87,7 +88,7 @@ fn avgf(ts: [float]) -> float {
    ret vec::foldl(0f, ts, {|a,b| a+b})/(vec::len(ts) as float);
 }
 
-fn avgu(ts: [uint]) -> uint {
+fn avgu(ts: [mut uint]) -> uint {
    ret vec::foldl(0u, ts, {|a,b| a+b})/(vec::len(ts) as uint);
 }
 
@@ -106,7 +107,7 @@ fn compare_sweep_strings <XX, YY> (
    let iters = 5u;  // how many times to run at each size
    let steps = 10u;  // how many steps are in a sweep
 
-   let size = min_size;
+   let mut size = min_size;
 
    let generator = rand::rng();
 
@@ -117,9 +118,9 @@ fn compare_sweep_strings <XX, YY> (
 
    // sweep through sizes
    while size <= max_size {
-      let iter = 0u;
-      let timesA = [];
-      let timesB = [];
+      let mut iter = 0u;
+      let mut timesA = [mut];
+      let mut timesB = [mut];
 
       while iter < iters {
          let dataA = generator.gen_str(size);
@@ -156,7 +157,7 @@ fn compare_sweep_u8vecs <XX, YY> (
    let iters = 5u;  // how many times to run at each size
    let steps = 10u;  // how many steps are in a sweep
 
-   let size = min_size;
+   let mut size = min_size;
 
    let generator = rand::rng();
 
@@ -167,16 +168,16 @@ fn compare_sweep_u8vecs <XX, YY> (
 
    // sweep through sizes
    while size <= max_size {
-      let iter = 0u;
-      let timesA = [];
-      let timesB = [];
+      let mut iter = 0u;
+      let mut timesA = [mut];
+      let mut timesB = [mut];
 
       while iter < iters {
-         let dataA = generator.gen_bytes(size);
-         let dataB = dataA;
+         let mut dataA = generator.gen_bytes(size);
+         let mut dataB = dataA;
       
-         let runA = measure_time({|| actionA(dataA)});
-         let runB = measure_time({|| actionB(dataB)});
+         let mut runA = measure_time({|| actionA(dataA)});
+         let mut runB = measure_time({|| actionB(dataB)});
 
          vec::push(timesA, runA);
          vec::push(timesB, runB);
