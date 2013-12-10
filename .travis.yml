@@ -2,9 +2,9 @@ before_install:
   - yes | sudo add-apt-repository ppa:hansjorg/rust
   - sudo apt-get update
 install:
-  - sudo apt-get install rust-nightly
+  - sudo apt-get install rust-nightly pandoc
 script:
-  - rustc -o bin/main       --bin  src/demo.rs
-  - rustc -o bin/main_tests --test src/demo.rs
-  - ./bin/main
-  - ./bin/main_tests --test --bench
+  - make help
+  - make
+  - make run
+  - make test
