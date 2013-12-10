@@ -1,0 +1,12 @@
+*.swp
+*.exe
+*~
+*.o
+*.so
+*.tmp
+
+*.dSYM
+.rust
+build
+
+bin
