@@ -18,4 +18,30 @@ rustc --bin  main.rs -o main
 rustc --test main.rs -o main_tests
 ```
 
+# Flags to `rustc`
+```sh
+rustc --bin  main.rs -o main
+rustc --test main.rs -o main_tests --allow dead_code
+```
+
+# Symbols when compiled (--bin)
+* tests are skipped
+```
+EXCERPT
+```
+
+# my makefile / substitute rustpkg
+
+# my filewatcher
+
+# tying it all together
+```sh
+$ rustpkg testloop -h
+Usage: rustpkg testloop [--bench] [--opt-level [0-3]]
+```
+
+
+
+
+
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env rustx
 #[feature(non_ascii_idents)];
 extern mod extra;
+use std::os;
 
 #[main]
 fn say_hi () {
    println("Hello!!");
+   os::set_exit_status(0);
 }
 
 #[test]
