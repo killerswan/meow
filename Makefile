@@ -1,11 +1,11 @@
-all: main main_test docs
+all: main main_test docs testloop-rs
 
 output_dir: 
 	@[ -d ./bin ] || mkdir ./bin
 
 main: output_dir
 	@[ -d ./bin ] || mkdir ./bin
-	rustc -o ./bin/main       --bin  src/demo.rs
+	rustc -o ./bin/main --bin --opt-level=3 src/demo.rs
 
 docs: output_dir
 	pandoc --standalone -t slidy slides/lightning-2013-12.md -o bin/lightning-2013-12.html
@@ -23,14 +23,18 @@ run_test:
 run_testbench:
 	./bin/main_test --test --bench
 
-run_loop_test: main_test run_test
-run_loop_testbench: main_test run_testbench
+testloop-rs:
+	rustc -o ./bin/testloop-rs --bin --opt-level=0 src/testloop-rs.rs
+
+run_loop:
+	./bin/testloop-rs ./src/demo.rs --test --bench
 
 clean:
 	@rm -rf ./bin
 
 help:
 	@echo "Usage: make [main | main_test | docs | clean]"
-	@echo "       make [run | run_test | run_testbench | testloop]"
+	@echo "       make [run | run_test | run_testbench]"
+	@echo "       make [run_loop]"
 	@echo "       make [help]"
 

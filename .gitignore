@@ -4,6 +4,7 @@
 *.o
 *.so
 *.tmp
+*.lock
 
 *.dSYM
 .rust
