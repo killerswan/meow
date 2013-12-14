@@ -1,5 +1,5 @@
 #!/usr/bin/env rustx
-
+#[feature(non_ascii_idents)];
 extern mod extra;
 
 #[main]

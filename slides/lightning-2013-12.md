@@ -1,15 +1,21 @@
 
-% "If we don't try, we will not know how our luck falls." [0]
-
-@killerswan
-Kevin Cantu <me@kevincantu.org>
+% "If we don't try, we will not know how our luck falls." -- Saga of King Hrolf Kraki / Byock
+% @killerswan
+% Kevin Cantu <me@kevincantu.org>
 
 
 # Rust Testing 101
 * --test
-* #[test]
-* #[bench]
+* "#[test]"
+* "#[bench]"
 * Travis.CI
 
+![window_cat.jpg](static/window_cat.jpg)
 
-[0] Saga of King Hrolf Kraki / Byock / random message board
+# Flags to `rustc`
+```sh
+rustc --bin  main.rs -o main
+rustc --test main.rs -o main_tests
+```
+
+
