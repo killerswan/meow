@@ -32,8 +32,6 @@ EXCERPT
 
 # my makefile / substitute rustpkg
 
-# my filewatcher
-
 # tying it all together
 ```sh
 $ rustpkg testloop -h

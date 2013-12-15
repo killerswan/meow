@@ -27,7 +27,7 @@ testloop-rs:
 	rustc -o ./bin/testloop-rs --bin --opt-level=0 src/testloop-rs.rs
 
 run_loop:
-	./bin/testloop-rs ./src/demo.rs --test --bench
+	./bin/testloop-rs ./src/demo.rs --test
 
 clean:
 	@rm -rf ./bin
