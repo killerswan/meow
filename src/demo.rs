@@ -1,4 +1,3 @@
-#!/usr/bin/env rustx
 #[feature(non_ascii_idents)];
 extern mod extra;
 use std::os;
@@ -17,5 +16,8 @@ fn addition_works () {
 #[bench]
 fn addition_benchmarked (b: &mut extra::test::BenchHarness) {
    let mut sum = 0;
-   b.iter(|| sum += 1)
+   b.iter(|| {
+      sum += 1;
+      std::io::timer::sleep(5000)
+   })
 }
