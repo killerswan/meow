@@ -1,6 +1,9 @@
 #[pkgid="testloop#0.1-pre"];
 #[crate_type="bin"];
 
+extern mod rustc;
+extern mod extra;
+
 use std::io;
 use std::io::fs;
 use std::os;
@@ -125,7 +128,7 @@ fn request_build(crate: &str, test_args: &[~str]) {
       
       // build
       println("<<<< building tests >>>>");
-      run("/usr/local/bin/rustc",
+      rustc::main_args(
          [~"-o", test_bin.clone(),
           ~"--test", crate,
           ~"--allow", ~"dead_code",
