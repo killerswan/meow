@@ -2,9 +2,13 @@
 *.exe
 *~
 *.o
-*.tmp
 *.so
-main
+*.tmp
+*.lock
 
+*.dSYM
+.rust
 
-
+build
+bin
+loop_test
