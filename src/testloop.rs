@@ -1,3 +1,4 @@
+#[feature(non_ascii_idents)];
 extern mod extra;
 use std::io;
 use std::io::fs;
@@ -103,7 +104,7 @@ fn is_file(path: &str) -> bool {
 
 fn request_build(args: &[~str]) {
    let crate    : ~str    = args[1].to_str();
-   let test_bin : ~str    = ~"./loop_test";
+   let test_bin : ~str    = ~"./.tests_in_loop.exe";
    let test_args: &[~str] = args.slice_from(2);
 
    if is_file(crate) {

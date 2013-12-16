@@ -1,4 +1,4 @@
-all: build build_test docs build_testloop
+all: docs build build_test build_testloop
 
 output_dir: 
 	@[ -d ./bin ] || mkdir ./bin
@@ -24,21 +24,20 @@ run_testbench:
 	./bin/main_test --test --bench
 
 build_testloop:
-	rustc -o ./bin/testloop-rs --bin --opt-level=0 src/testloop-rs.rs
+	rustc -o ./bin/testloop --bin --opt-level=0 src/testloop.rs
 
 run_loop:
-	./bin/testloop-rs ./src/demo.rs --test
+	./bin/testloop ./src/demo.rs --test
 
-run_loop_bench:
-	./bin/testloop-rs ./src/demo.rs --test --bench
+run_loopbench:
+	./bin/testloop ./src/demo.rs --test --bench
 
 clean:
 	@rm -rf ./bin
 
 help:
-	@echo "Usage: make [build | build_test | docs | clean]"
+	@echo "Usage: make [clean]"
 	@echo "       make [run | run_test | run_testbench]"
-	@echo "       make [build_testloop]"
-	@echo "       make [run_loop]"
+	@echo "       make [run_loop | run_loopbench]"
 	@echo "       make [help]"
 

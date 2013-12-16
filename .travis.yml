@@ -7,4 +7,4 @@ script:
   - make help
   - make
   - make run
-  - make test
+  - make run_testbench
