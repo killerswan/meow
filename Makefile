@@ -26,7 +26,7 @@ run_testbench:
 	./bin/main_test --test --bench
 
 run_loop:
-	./bin/testloop ./src/demo.rs --test
+	./bin/testloop ./src/demo.rs
 
 run_loopbench:
 	./bin/testloop ./src/demo.rs --test --bench

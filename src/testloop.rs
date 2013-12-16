@@ -1,6 +1,6 @@
-#[feature(non_ascii_idents)];
-//extern mod rustc;
-extern mod extra;
+#[pkgid="testloop#0.1-pre"];
+#[crate_type="bin"];
+
 use std::io;
 use std::io::fs;
 use std::os;
@@ -9,23 +9,18 @@ use std::str;
 
 #[main]
 fn testloop () {
-   let args = os::args();
-
-   let dir = ".";
    let mut latest = 0;
 
    loop {
-      let (has_changed, latest_) = modified_since(latest, dir);
+      let (has_changed, latest_) = modified_since(latest, ".");
       latest = latest_;
 
       if has_changed {
-         request_build(args)
+         request_build(os::args());
       }
 
       io::timer::sleep(200);
    }
-
-   //os::set_exit_status(0);
 }
 
 fn modified(path: Path) -> u64 {
@@ -72,14 +67,14 @@ fn run(exe: &str, args: &[~str])
          let err: &str = str::from_utf8(ps.error);
          let stat: io::process::ProcessExit = ps.status;
 
-         if out.len() > 0 {
-            println!("STDOUT:\n{}", out);
+         if stat != io::process::ExitStatus(0) {
+            println!("STATUS: {:?}", stat);
          }
          if err.len() > 0 {
             println!("STDERR:\n{}", err);
          }
-         if stat != io::process::ExitStatus(0) {
-            println!("STATUS: {:?}", stat);
+         if out.len() > 0 {
+            println!("STDOUT:\n{}", out);
          }
          return Some(stat);
       }
@@ -97,18 +92,22 @@ fn is_file(path: &str) -> bool {
          }
       }
       Err(_e) => {
-         // println!("Error calling `stat` on path `{}`: {:?}", path, e)
+         // println!("Error in `stat` on `{}`: {:?}", path, e);
          return false;
       }
    }
 }
 
+// if possible, build and run the given crate (first arg)
 fn request_build(args: &[~str]) {
    let crate    : ~str    = args[1].to_str();
    let test_bin : ~str    = ~"./.tests_in_loop.exe";
    let test_args: &[~str] = args.slice_from(2);
 
-   if is_file(crate) {
+   if !is_file(crate) {
+      println!("ERROR: crate to test is missing: {}", crate);
+      os::set_exit_status(1);
+   } else {
       // cleanup
       if is_file(test_bin) {
          let p = Path::new(test_bin.clone());
@@ -118,7 +117,6 @@ fn request_build(args: &[~str]) {
       // build
       println("<<<< building tests >>>>");
       run("/usr/local/bin/rustc",
-      //rustc::main_args(
          [~"-o", test_bin.clone(),
           ~"--test", crate,
           ~"--allow", ~"dead_code",
@@ -134,6 +132,4 @@ fn request_build(args: &[~str]) {
       }
    }
 }
-
-
 
