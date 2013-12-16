@@ -1,18 +1,20 @@
-all: docs build build_test build_testloop
+all: build build_docs build_test build_testloop
 
-output_dir: 
+bindir: 
 	@[ -d ./bin ] || mkdir ./bin
 
-build: output_dir
-	@[ -d ./bin ] || mkdir ./bin
+build: bindir
 	rustc -o ./bin/main --bin --opt-level=3 src/demo.rs
 
-docs: output_dir
+build_docs: bindir
 	pandoc --standalone -t slidy slides/lightning-2013-12.md -o bin/lightning-2013-12.html
 	cp -R ./slides/static ./bin
 
-build_test: output_dir
+build_test: bindir
 	rustc -o ./bin/main_test --test src/demo.rs --allow dead_code --opt-level 0
+
+build_testloop: bindir
+	rustc -o ./bin/testloop --bin -Z debug-info -Z extra-debug-info --opt-level=3 src/testloop.rs
 
 run:
 	./bin/main
@@ -22,9 +24,6 @@ run_test:
 
 run_testbench:
 	./bin/main_test --test --bench
-
-build_testloop:
-	rustc -o ./bin/testloop --bin --opt-level=0 src/testloop.rs
 
 run_loop:
 	./bin/testloop ./src/demo.rs --test
