@@ -18,6 +18,6 @@ fn addition_benchmarked (b: &mut extra::test::BenchHarness) {
    let mut sum = 0;
    b.iter(|| {
       sum += 1;
-      std::io::timer::sleep(5000)
+      //std::io::timer::sleep(5)
    })
 }

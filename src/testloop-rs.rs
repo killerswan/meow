@@ -57,23 +57,31 @@ fn modified_since(latest: u64, dir: &str) -> (bool, u64) {
 }
 
 // run and selectively print results of `process_output`
-fn run(exe: &str, args: &[~str]) -> io::process::ProcessExit {
-   let ps: run::ProcessOutput = run::process_output(exe, args);
+fn run(exe: &str, args: &[~str])
+   -> Option<io::process::ProcessExit> {
 
-   let out: &str = str::from_utf8(ps.output);
-   let err: &str = str::from_utf8(ps.error);
-   let stat: io::process::ProcessExit = ps.status;
+   match run::process_output(exe, args) {
+      None => {
+         println!("Failed to run `{}` with args: {:?}", exe, args);
+         return None;
+      }
+      Some(ps) => {
+         let out: &str = str::from_utf8(ps.output);
+         let err: &str = str::from_utf8(ps.error);
+         let stat: io::process::ProcessExit = ps.status;
 
-   if out.len() > 0 {
-      println!("STDOUT:\n{}", out);
+         if out.len() > 0 {
+            println!("STDOUT:\n{}", out);
+         }
+         if err.len() > 0 {
+            println!("STDERR:\n{}", err);
+         }
+         if stat != io::process::ExitStatus(0) {
+            println!("STATUS: {:?}", stat);
+         }
+         return Some(stat);
+      }
    }
-   if err.len() > 0 {
-      println!("STDERR:\n{}", err);
-   }
-   if stat != io::process::ExitStatus(0) {
-      println!("STATUS: {:?}", stat);
-   }
-   return stat;
 }
 
 // test if a path is a file (and not missing or something else)
@@ -86,8 +94,8 @@ fn is_file(path: &str) -> bool {
             _            => { return false; }
          }
       }
-      Err(e) => {
-         println!("Error calling `stat` on path `{}`: {:?}", path, e)
+      Err(_e) => {
+         // println!("Error calling `stat` on path `{}`: {:?}", path, e)
          return false;
       }
    }
