@@ -16,7 +16,7 @@ fn say_hi () {
 
 #[test]
 fn addition() {
-   assert! (2 + 2 != 4);
+   assert! (2 + 2 == 4);
 }
 
 #[test]

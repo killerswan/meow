@@ -91,8 +91,8 @@ fn is_file(path: &str) -> bool {
             _            => { return false; }
          }
       }
-      Err(_e) => {
-         // println!("Error in `stat` on `{}`: {:?}", path, e);
+      Err(err) => {
+         println!("Error in `stat` on `{}`: {:?}", path, err);
          return false;
       }
    }
