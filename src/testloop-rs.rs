@@ -10,7 +10,7 @@ fn testloop () {
    let args = os::args();
 
    let dir = ".";
-   let mut latest = last_modified(dir);
+   let mut latest = 0;
 
    loop {
       let (has_changed, latest_) = modified_since(latest, dir);
