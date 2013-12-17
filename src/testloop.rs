@@ -14,7 +14,8 @@ fn testloop () {
    let args = os::args();
    let src = args[1].to_str();
    let test_args = args.slice_from(2);
-   let dir = dirname(src);
+   //let dir = dirname(src);
+   let dir = ".";
 
    loop {
       let (has_changed, latest_) = modified_since(latest, dir);
