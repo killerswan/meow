@@ -11,16 +11,26 @@ use std::str;
 fn testloop () {
    let mut latest = 0;
 
+   let args = os::args();
+   let src = args[1].to_str();
+   let test_args = args.slice_from(2);
+   let dir = dirname(src);
+
    loop {
-      let (has_changed, latest_) = modified_since(latest, ".");
+      let (has_changed, latest_) = modified_since(latest, dir);
       latest = latest_;
 
       if has_changed {
-         request_build(os::args());
+         request_build(src, test_args);
       }
 
       io::timer::sleep(200);
    }
+}
+
+fn dirname(path: &str) -> ~str {
+   let pp = Path::new(path);
+   return pp.dirname_str().unwrap().to_str();
 }
 
 fn modified(path: Path) -> u64 {
@@ -99,10 +109,9 @@ fn is_file(path: &str) -> bool {
 }
 
 // if possible, build and run the given crate (first arg)
-fn request_build(args: &[~str]) {
-   let crate    : ~str    = args[1].to_str();
+fn request_build(crate: &str, test_args: &[~str]) {
+   let crate    : ~str    = crate.to_str();
    let test_bin : ~str    = ~"./.tests_in_loop.exe";
-   let test_args: &[~str] = args.slice_from(2);
 
    if !is_file(crate) {
       println!("ERROR: crate to test is missing: {}", crate);
