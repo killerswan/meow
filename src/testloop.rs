@@ -2,7 +2,6 @@
 #[crate_type="bin"];
 
 extern mod rustc;
-extern mod extra;
 
 use std::io;
 use std::io::fs;
