@@ -128,7 +128,8 @@ fn request_build(crate: &str, test_args: &[~str]) {
       // build
       println("<<<< building tests >>>>");
       rustc::main_args(
-         [~"-o", test_bin.clone(),
+         [os::args()[0],
+          ~"-o", test_bin.clone(),
           ~"--test", crate,
           ~"--allow", ~"dead_code",
           ~"--opt-level", ~"0"]);
