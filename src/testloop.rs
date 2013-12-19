@@ -15,9 +15,6 @@ fn testloop () {
    let test_args = args.slice_from(2);
    let absdir = absdirname(&src);
 
-   let dest = Path::new("../rust/src/librustc/");
-   os::change_dir(&dest);
-
    loop {
       let (has_changed, latest_) = modified_since(latest, &absdir);
       latest = latest_;
@@ -85,7 +82,7 @@ fn run(exe: &Path, args: &[~str])
 
    match run::process_output(ps(exe), args) {
       None => {
-         println!("Failed to run `{:?}` with args: {:?}", exe, args);
+         println!("Failed to run `{}` with args: {:?}", ps(exe), args);
          return None;
       }
       Some(ps) => {
@@ -116,8 +113,8 @@ fn is_file(path: &Path) -> bool {
             _            => { return false; }
          }
       }
-      Err(err) => {
-         println!("Error in `stat` on `{:?}`: {:?}", path, err);
+      Err(_err) => {
+         //println!("Error in `stat` on `{}`: {:?}", ps(path), err);
          return false;
       }
    }
@@ -126,10 +123,9 @@ fn is_file(path: &Path) -> bool {
 // if possible, build and run the given crate (first arg)
 fn request_build(crate: &Path, test_args: &[~str]) {
    let test_bin = &Path::new("./.tests_in_loop.exe");
-   //let test_bin = &test_bin;
 
    if !is_file(crate) {
-      println!("ERROR: crate to test is missing: {:?}", crate);
+      println!("ERROR: crate to test is missing: {}", ps(crate));
       os::set_exit_status(1);
    } else {
       // cleanup
