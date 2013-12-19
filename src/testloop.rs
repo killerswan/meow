@@ -1,6 +1,3 @@
-#[pkgid="testloop#0.1-pre"];
-#[crate_type="bin"];
-
 extern mod rustc;
 
 use std::io;
@@ -14,35 +11,52 @@ fn testloop () {
    let mut latest = 0;
 
    let args = os::args();
-   let src = args[1].to_str();
+   let src = expandpath(args[1].to_str());
    let test_args = args.slice_from(2);
-   let dir = dirname(src);
+   let absdir = absdirname(&src);
+
+   let dest = Path::new("../rust/src/librustc/");
+   os::change_dir(&dest);
 
    loop {
-      let (has_changed, latest_) = modified_since(latest, dir);
+      let (has_changed, latest_) = modified_since(latest, &absdir);
       latest = latest_;
 
       if has_changed {
-         request_build(src, test_args);
+         request_build(&src, test_args);
       }
 
       io::timer::sleep(200);
    }
 }
 
-fn dirname(path: &str) -> ~str {
-   let pp = Path::new(path);
-   return pp.dirname_str().unwrap().to_str();
+fn ps(path: &Path) -> ~str {
+   path.as_str().unwrap().to_str()
 }
 
-fn modified(path: Path) -> u64 {
-   let st = fs::stat(&path);
+fn expandpath(path: &str) -> Path {
+   let pp = Path::new(path);
+
+   if pp.is_relative() {
+      let cwd = os::getcwd();
+      let ppp = cwd.join(pp);
+      return ppp;
+   } else {
+      return pp;
+   }
+}
+
+fn absdirname(path: &Path) -> Path {
+   path.dir_path()
+}
+
+fn modified(path: &Path) -> u64 {
+   let st = fs::stat(path);
    return st.modified;
 }
 
-fn last_modified(path: &str) -> u64 {
-   let pp = Path::new(path);
-   let wi: fs::WalkIterator = fs::walk_dir(&pp);
+fn last_modified(pp: &Path) -> u64 {
+   let wi: fs::WalkIterator = fs::walk_dir(pp);
 
    let mut rs_files = wi.filter(|path| {
       match path.extension_str() {
@@ -52,26 +66,26 @@ fn last_modified(path: &str) -> u64 {
    });
 
    let latest: Option<Path> =
-      rs_files.max_by(|p| modified(p.clone()));
+      rs_files.max_by(|p| modified(p));
 
    match latest {
       None       => { 0 }
-      Some(path) => { modified(path) }
+      Some(path) => { modified(&path) }
    }
 }
 
-fn modified_since(latest: u64, dir: &str) -> (bool, u64) {
+fn modified_since(latest: u64, dir: &Path) -> (bool, u64) {
    let new_latest = last_modified(dir);
    (last_modified(dir) > latest, new_latest)
 }
 
 // run and selectively print results of `process_output`
-fn run(exe: &str, args: &[~str])
+fn run(exe: &Path, args: &[~str])
    -> Option<io::process::ProcessExit> {
 
-   match run::process_output(exe, args) {
+   match run::process_output(ps(exe), args) {
       None => {
-         println!("Failed to run `{}` with args: {:?}", exe, args);
+         println!("Failed to run `{:?}` with args: {:?}", exe, args);
          return None;
       }
       Some(ps) => {
@@ -94,9 +108,8 @@ fn run(exe: &str, args: &[~str])
 }
 
 // test if a path is a file (and not missing or something else)
-fn is_file(path: &str) -> bool {
-   let p = Path::new(path);
-   match io::result(|| fs::stat(&p)) {
+fn is_file(path: &Path) -> bool {
+   match io::result(|| fs::stat(path)) {
       Ok(stat) => {
          match stat.kind {
             io::TypeFile => { return true; }
@@ -104,33 +117,32 @@ fn is_file(path: &str) -> bool {
          }
       }
       Err(err) => {
-         println!("Error in `stat` on `{}`: {:?}", path, err);
+         println!("Error in `stat` on `{:?}`: {:?}", path, err);
          return false;
       }
    }
 }
 
 // if possible, build and run the given crate (first arg)
-fn request_build(crate: &str, test_args: &[~str]) {
-   let crate    : ~str    = crate.to_str();
-   let test_bin : ~str    = ~"./.tests_in_loop.exe";
+fn request_build(crate: &Path, test_args: &[~str]) {
+   let test_bin = &Path::new("./.tests_in_loop.exe");
+   //let test_bin = &test_bin;
 
    if !is_file(crate) {
-      println!("ERROR: crate to test is missing: {}", crate);
+      println!("ERROR: crate to test is missing: {:?}", crate);
       os::set_exit_status(1);
    } else {
       // cleanup
       if is_file(test_bin) {
-         let p = Path::new(test_bin.clone());
-         fs::unlink(&p);
+         fs::unlink(test_bin);
       }
       
       // build
       println("<<<< building tests >>>>");
       rustc::main_args(
          [os::args()[0],
-          ~"-o", test_bin.clone(),
-          ~"--test", crate,
+          ~"-o", ps(test_bin),
+          ~"--test", ps(crate),
           ~"--allow", ~"dead_code",
           ~"--opt-level", ~"0"]);
 

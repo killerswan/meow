@@ -1,6 +1,3 @@
-#[pkgid="demo#0.1-pre"];
-#[crate_type="bin"];
-
 #[feature(non_ascii_idents)];
 #[allow(dead_code)];
 
