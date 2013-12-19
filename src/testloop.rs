@@ -1,4 +1,5 @@
-extern mod rustc;
+#[pkgid="testloop#0.1-pre"];
+#[crate_type="bin"];
 
 use std::io;
 use std::io::fs;
@@ -80,6 +81,8 @@ fn modified_since(latest: u64, dir: &Path) -> (bool, u64) {
 fn run(exe: &Path, args: &[~str])
    -> Option<io::process::ProcessExit> {
 
+   println!("Running `{}` with args: {:?}", ps(exe), args);
+
    match run::process_output(ps(exe), args) {
       None => {
          println!("Failed to run `{}` with args: {:?}", ps(exe), args);
@@ -122,7 +125,7 @@ fn is_file(path: &Path) -> bool {
 
 // if possible, build and run the given crate (first arg)
 fn request_build(crate: &Path, test_args: &[~str]) {
-   let test_bin = &Path::new("./.tests_in_loop.exe");
+   let test_bin = &expandpath("./.tests_in_loop.exe");
 
    if !is_file(crate) {
       println!("ERROR: crate to test is missing: {}", ps(crate));
@@ -135,9 +138,8 @@ fn request_build(crate: &Path, test_args: &[~str]) {
       
       // build
       println("<<<< building tests >>>>");
-      rustc::main_args(
-         [os::args()[0],
-          ~"-o", ps(test_bin),
+      run(&Path::new("/usr/local/bin/rustc"),
+         [~"-o", ps(test_bin),
           ~"--test", ps(crate),
           ~"--allow", ~"dead_code",
           ~"--opt-level", ~"0"]);
