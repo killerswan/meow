@@ -1,4 +1,4 @@
-#[pkgid="testloop#0.1-pre"];
+#[crate_id="testloop#0.1-pre"];
 #[crate_type="bin"];
 
 use std::io;
@@ -15,6 +15,8 @@ fn testloop () {
    let src = expandpath(args[1].to_str());
    let test_args = args.slice_from(2);
    let absdir = absdirname(&src);
+
+   os::setenv("RUST_LOG", "rustc=1");
 
    loop {
       let (has_changed, latest_) = modified_since(latest, &absdir);
