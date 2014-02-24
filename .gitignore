@@ -5,6 +5,7 @@
 *.so
 *.tmp
 *.lock
+.DS_Store
 
 *.dSYM
 .rust
@@ -12,3 +13,4 @@
 build
 bin
 loop_test
+output

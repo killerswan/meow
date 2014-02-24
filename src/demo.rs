@@ -1,16 +1,17 @@
-#[pkgid="demo#0.1"];
+#[crate_id="demo#0.1"];
 #[crate_type="bin"];
 
 #[feature(non_ascii_idents)];
 #[allow(dead_code)];
 
-extern mod extra;
+extern crate extra;
 use std::os;
+use std::io;
 
 #[main]
 fn say_hi () {
    let _args = os::args();
-   println("Hello!!");
+   io::println("Hello!!");
    os::set_exit_status(0);
 }
 

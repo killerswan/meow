@@ -51,12 +51,19 @@ fn absdirname(path: &Path) -> Path {
 }
 
 fn modified(path: &Path) -> u64 {
-   let st = fs::stat(path);
-   return st.modified;
+   match fs::stat(path) {
+      Ok(st) => {
+         return st.modified;
+      }
+      Err(_err) => {
+         println!("FIXME: modified has errored in stat()");
+         return 0;
+      }
+   }
 }
 
 fn last_modified(pp: &Path) -> u64 {
-   let wi: fs::WalkIterator = fs::walk_dir(pp);
+   let wi = fs::walk_dir(pp);
 
    let mut rs_files = wi.filter(|path| {
       match path.extension_str() {
@@ -111,7 +118,7 @@ fn run(exe: &Path, args: &[~str])
 
 // test if a path is a file (and not missing or something else)
 fn is_file(path: &Path) -> bool {
-   match io::result(|| fs::stat(path)) {
+   match (fs::stat(path)) {
       Ok(stat) => {
          match stat.kind {
             io::TypeFile => { return true; }
@@ -126,11 +133,11 @@ fn is_file(path: &Path) -> bool {
 }
 
 // if possible, build and run the given crate (first arg)
-fn request_build(crate: &Path, test_args: &[~str]) {
+fn request_build(cratepath: &Path, test_args: &[~str]) {
    let test_bin = &expandpath("./.tests_in_loop.exe");
 
-   if !is_file(crate) {
-      println!("ERROR: crate to test is missing: {}", ps(crate));
+   if !is_file(cratepath) {
+      println!("ERROR: crate to test is missing: {}", ps(cratepath));
       os::set_exit_status(1);
    } else {
       // cleanup
@@ -139,20 +146,20 @@ fn request_build(crate: &Path, test_args: &[~str]) {
       }
       
       // build
-      println("<<<< building tests >>>>");
+      io::println("<<<< building tests >>>>");
       run(&Path::new("/usr/local/bin/rustc"),
          [~"-o", ps(test_bin),
-          ~"--test", ps(crate),
+          ~"--test", ps(cratepath),
           ~"--allow", ~"dead_code",
           ~"--opt-level", ~"0"]);
 
       // run
       if is_file(test_bin) {
-         println("<<<< running tests >>>>");
+         io::println("<<<< running tests >>>>");
          run(test_bin, test_args);
       }
       else {
-         println("<<<< NOT running tests >>>>");
+         io::println("<<<< NOT running tests >>>>");
       }
    }
 }
