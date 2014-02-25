@@ -6,8 +6,9 @@
 
 
 -------
-## "Thou shalt not test the Lord thy God!"
--- The Bible
+
+## "Do not test the Lord your God."
+-- The Bible, Luke 4:12
 
 
 
@@ -40,146 +41,234 @@
 
 # What is the scientific method?
 
-1. We cannot see everything.
-2. Good claims make **testable predictions**.
+Go read some *Thomas Kuhn*.
 
-<The culture around this is essential.>
+But don't take anybody's word for it:
+ask questions.
+
+
+
+
+
+# Avoid senseless claims
+
+![](static/garbage.gif)
+
 
 
 
 
 # But what if I can *prove* it mathematically?
 
-toxoplasma gondii: ~20 MBP
-
---> mind control of higher-order mammals
+![](static/toxo600.jpg)
 
 
 
 
---------
-baboons in luggage GIF: FIXME
+# Software engineering
 
 
 
 
-# Cheap negative proofs:
 
-1. Failed type checking.
-2. Failing tests.
+# Software engineering: cheap negative proofs
 
-(Bug reports and exploits are expensive.)
+1. type checking errors
 
-
-(meredith patterson likes to say exploits are proofs, too)
+2. test failures
 
 
 
 
---------
-goto fail;
-goto fail;  // FIXME
+
+
+# Bug reports and exploits: expensive negative proofs
+
+![](static/baboons2.jpg)
 
 
 
 
-# Rust's toolbox for testing
+
+
+
+# Tools Rust gives us now
+
 
 
 
 
 # Hello world
 ```rust
-fn main() {}
+extern crate extra;
+use std::io;
+
+#[main]
+fn say_hi () {
+   io::println("Hello, @KarlTheFog!");
+}
 ```
+
+# Hello world (test)
+```rust
+#[test]
+fn addition_works () {
+   assert! (2 + 2 == 4);
+}
+```
+
+
+# Building
 
 ```sh
 $ rustc        main.rs -o main
-$ ./main
+$ rustc --test main.rs -o test
 ```
 
 
-# Hello world of tests
-```rust
-#[test]
-fn t1() {}
-```
+# Running
 
 ```sh
-$ rustc --test main.rs -o test
+$ ./main
+Hello, @KarlTheFog!
 $ ./test
+
+running 2 tests
+test addition_works ... ok
+test addition_benchmarked ... ignored
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured
 ```
+
+
+
+
+# What was that?
+
+```rust
+#[bench]
+fn addition_benchmarked (b: &mut extra::test::BenchHarness) {
+   let mut sum = 0;
+   b.iter(|| sum += 1)
+}
+```
+
+
+# Running benchmarks, too
+
+```sh
+$ ./test --bench --test
+
+running 2 tests
+test addition_works ... ok
+test addition_benchmarked ... bench:        32 ns/iter (+/- 12)
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 1 measured
+```
+
+
+
+# Benchmark metrics (saving)
+
+```sh
+$ ./test --bench --save-metrics sample.json
+```
+
+```json
+{
+  "addition_benchmarked": {
+    "noise": 16.1,
+    "value": 34
+  }
+}
+```
+
+
+# Benchmark metrics (ratcheting)
+
+```sh
+$ ./test --bench --ratchet-metrics sample.json
+```
+
+Note: will actually update the `sample.json`...
 
 
 
 
 # Sharding
-Machine 1:
+
+Run half of tests on each machine:
 ```sh
-$ ./test --......FIXME.... SHARDING SYNTAX
-```
+$ ./demo --test-shard 0.2
 
-Machine 2:
-```sh
-$ ./test --......FIXME.... SHARDING SYNTAX
-```
+running 4 tests
+test testA ... ok
+test testE ... ok
+test testC ... ok
+test testG ... ok
 
-
-
-
-
-# Benchmarks
-```rust
-#[bench]
-fn t2() {}
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured
 ```
 
 ```sh
-$ rustc --test main.rs -o test
-$ ./test --bench
+$ ./demo --test-shard 1.2
+
+running 3 tests
+test testB ... ok
+test testD ... ok
+test testF ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured
 ```
 
 
 
 
-# Metrics
-
-```sh
-$ ./test --bench --save FIXME
-$ ./test --bench --metrics FIXME
-```
 
 
+# Continuous integration
 
 
 
 
 # Rust.CI
+
+Instructions here: <http://www.rust-ci.org/help/>
+
 .travis.yml:
 ```yml
+before_install:
+  - yes | sudo add-apt-repository ppa:hansjorg/rust
+  - sudo apt-get update
 
+install:
+  - sudo apt-get install rust-nightly
+
+script:
+  - rustc        src/demo.rs -o demo
+  - ./demo
+  - rustc --test src/demo.rs -o test
+  - ./test --test --bench
 ```
 
 
-# Rust.CI
-Signup page
-FIXME
-
 
 
 # Rust.CI
-FAILURE EMAIL FIXME
+![](static/travis.ci.failing.png)
+
+
+# Rust.CI
+![](static/travis.ci.fixed.png)
 
 
 
 
 # Experiment: testloop
-```sh
-$ rustpkg testloop -h
-Usage: rustpkg testloop [--bench]
+```
+FIXME
 ```
 
-Run while editing your code for instant feedback.
 
 
 
@@ -192,13 +281,11 @@ Run while editing your code for instant feedback.
 
 
 
-# Sources
-
-# References
-
-# More
+# Thanks for listening!
 
 Kevin Cantu (@killerswan) <<me@kevincantu.org>>
 
-[https://github.com/killerswan/meow](https://github.com/killerswan/meow)
+
+
+
 

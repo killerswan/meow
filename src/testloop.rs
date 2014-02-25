@@ -6,6 +6,7 @@ use std::io::fs;
 use std::os;
 use std::run;
 use std::str;
+use std::io::Process;
 
 #[main]
 fn testloop () {
@@ -63,22 +64,29 @@ fn modified(path: &Path) -> u64 {
 }
 
 fn last_modified(pp: &Path) -> u64 {
-   let wi = fs::walk_dir(pp);
+   match fs::walk_dir(pp) {
+      Ok(wi) => {
+         let mut rs_files = wi.filter(|path| {
+            match path.extension_str() {
+               None      => { false }
+               Some(ext) => { ext == "rs" }
+            }
+         });
 
-   let mut rs_files = wi.filter(|path| {
-      match path.extension_str() {
-         None      => { false }
-         Some(ext) => { ext == "rs" }
+         let latest: Option<Path> =
+            rs_files.max_by(|p| modified(p));
+
+         match latest {
+            None       => { 0 }
+            Some(path) => { modified(&path) }
+         }
       }
-   });
-
-   let latest: Option<Path> =
-      rs_files.max_by(|p| modified(p));
-
-   match latest {
-      None       => { 0 }
-      Some(path) => { modified(&path) }
+      Err(_err) => {
+         println!("FIXME: last_modified has errored in walk_dir()");
+         return 0;
+      }
    }
+
 }
 
 fn modified_since(latest: u64, dir: &Path) -> (bool, u64) {
@@ -92,15 +100,15 @@ fn run(exe: &Path, args: &[~str])
 
    println!("Running `{}` with args: {:?}", ps(exe), args);
 
-   match run::process_output(ps(exe), args) {
-      None => {
+   match Process::output(ps(exe), args) {
+      Err(_err) => {
          println!("Failed to run `{}` with args: {:?}", ps(exe), args);
          return None;
       }
-      Some(ps) => {
-         let out: &str = str::from_utf8(ps.output);
-         let err: &str = str::from_utf8(ps.error);
-         let stat: io::process::ProcessExit = ps.status;
+      Ok(out) => {
+         let out: &str = str::from_utf8(out.output);
+         let err: &str = str::from_utf8(out.error);
+         let stat: io::process::ProcessExit = out.status;
 
          if stat != io::process::ExitStatus(0) {
             println!("STATUS: {:?}", stat);
