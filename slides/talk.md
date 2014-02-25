@@ -62,6 +62,8 @@ ask questions.
 
 ![](static/toxo600.jpg)
 
+Image provided by Ke Hu and John Murray. [DOI: 10.1371/journal.ppat.0020020.g001]
+
 
 
 
