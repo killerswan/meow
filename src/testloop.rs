@@ -4,7 +4,6 @@
 use std::io;
 use std::io::fs;
 use std::os;
-use std::run;
 use std::str;
 use std::io::Process;
 
@@ -105,10 +104,16 @@ fn run(exe: &Path, args: &[~str])
          println!("Failed to run `{}` with args: {:?}", ps(exe), args);
          return None;
       }
-      Ok(out) => {
-         let out: &str = str::from_utf8(out.output);
-         let err: &str = str::from_utf8(out.error);
-         let stat: io::process::ProcessExit = out.status;
+      Ok(output) => {
+         let out: &str = match str::from_utf8(output.output) {
+                           Some(o) => o,
+                           None => ""
+                         };
+         let err: &str = match str::from_utf8(output.error) {
+                           Some(o) => o,
+                           None => ""
+                         };
+         let stat: io::process::ProcessExit = output.status;
 
          if stat != io::process::ExitStatus(0) {
             println!("STATUS: {:?}", stat);
@@ -126,7 +131,7 @@ fn run(exe: &Path, args: &[~str])
 
 // test if a path is a file (and not missing or something else)
 fn is_file(path: &Path) -> bool {
-   match (fs::stat(path)) {
+   match fs::stat(path) {
       Ok(stat) => {
          match stat.kind {
             io::TypeFile => { return true; }
@@ -150,18 +155,23 @@ fn request_build(cratepath: &Path, test_args: &[~str]) {
    } else {
       // cleanup
       if is_file(test_bin) {
-         fs::unlink(test_bin);
+         let res = fs::unlink(test_bin);
+         match res {
+            Ok(_) => (),
+            Err(_) => io::println("<<<< error: couldn't cleanup! >>>>"),
+         }
       }
       
       // build
+      io::println("");
       io::println("<<<< building tests >>>>");
       run(&Path::new("/usr/local/bin/rustc"),
          [~"-o", ps(test_bin),
           ~"--test", ps(cratepath),
-          ~"--allow", ~"dead_code",
           ~"--opt-level", ~"0"]);
 
       // run
+      io::println("");
       if is_file(test_bin) {
          io::println("<<<< running tests >>>>");
          run(test_bin, test_args);

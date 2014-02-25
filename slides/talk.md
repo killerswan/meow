@@ -265,8 +265,27 @@ script:
 
 
 # Experiment: testloop
-```
-FIXME
+```sh
+$ ./bin/testloop ./src/demo.rs --test --bench
+<<<< building tests >>>>
+Running `/usr/local/bin/rustc` with args: &[~"-o", ~"/Users/kevin/code/meow/.tests_in_loop.exe", ~"--test", ~"/Users/kevin/code/meow/src/demo.rs", ~"--allow", ~"dead_code", ~"--opt-level", ~"0"]
+<<<< running tests >>>>
+Running `/Users/kevin/code/meow/.tests_in_loop.exe` with args: &[~"--test", ~"--bench"]
+STDERR:
+warning: got 1 RUST_LOG specs but only matched
+0 of them. You may have mistyped a RUST_LOG spec. 
+Use RUST_LOG=::help to see the list of crates and modules.
+
+
+STDOUT:
+
+running 4 tests
+test addition ... ok
+test multiplication ... ignored
+test addition_fail ... ok
+test addition_benchmarked ... bench:   5592103 ns/iter (+/- 332740)
+
+test result: ok. 2 passed; 0 failed; 
 ```
 
 

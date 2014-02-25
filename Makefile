@@ -23,7 +23,7 @@ build_docs_pdf: bindir
 
 build_test: bindir
 	rustc -o ./bin/main_test --test src/demo.rs \
-	   --allow dead_code --opt-level 0
+	   --opt-level 0
 
 build_testloop: bindir
 	rustc -o ./bin/testloop src/testloop.rs \
