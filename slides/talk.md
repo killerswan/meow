@@ -1,5 +1,5 @@
 % Testing in Rust
-% Kevin Cantu @killerswan
+% Kevin Cantu (@killerswan) <<me@kevincantu.org>>
 % February 25, 2014
 
 
@@ -11,17 +11,11 @@
 -- The Bible, Luke 4:12
 
 
-
-
-# Overview
-
 1. The *scientific method*.
 
-2. Rust's fundamental toolkit.
+2. Rust, now.
 
-3. Something useful I'm playing with: **testloop**.
-
-4. Future directions.
+3. Rust, in the future.
 
 
 
@@ -269,8 +263,10 @@ script:
 # Experiment: testloop
 ```sh
 $ ./bin/testloop ./src/demo.rs --test --bench
+
 <<<< building tests >>>>
 Running `/usr/local/bin/rustc` with args: &[~"-o", ~"/Users/kevin/code/meow/.tests_in_loop.exe", ~"--test", ~"/Users/kevin/code/meow/src/demo.rs", ~"--allow", ~"dead_code", ~"--opt-level", ~"0"]
+
 <<<< running tests >>>>
 Running `/Users/kevin/code/meow/.tests_in_loop.exe` with args: &[~"--test", ~"--bench"]
 STDERR:
