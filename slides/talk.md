@@ -5,11 +5,8 @@
 
 
 
--------
 
-## "Do not test the Lord your God."
--- The Bible, Luke 4:12
-
+# Overview
 
 1. The *scientific method*.
 
@@ -44,7 +41,7 @@ ask questions.
 
 
 
-# Avoid senseless claims
+# Avoid ideas with nothing refutable
 
 ![](static/garbage.gif)
 
@@ -260,6 +257,12 @@ script:
 
 
 
+# Reject the bad stuff faster
+![](static/pingpongcat.png)
+
+
+
+
 # Experiment: testloop
 ```sh
 $ ./bin/testloop ./src/demo.rs --test --bench
@@ -296,6 +299,9 @@ test result: ok. 2 passed; 0 failed;
 * integration
 
 
+
+# Let's build a good culture
+![](static/garbage.gif)
 
 
 # Thanks for listening!
